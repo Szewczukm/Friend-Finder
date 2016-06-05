@@ -24,7 +24,7 @@ public class Server extends Thread
 			while(true)
 			{
 				client = ss.accept();
-				new ServerThread(client);
+				new RequestHandler(client);
 			}			
 		} 
 		catch (IOException | ClassNotFoundException | SQLException e) 

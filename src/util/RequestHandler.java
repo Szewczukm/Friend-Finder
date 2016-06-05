@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ServerThread extends Thread
+public class RequestHandler extends Thread
 {
 	Connection connect = null;
 	Socket client;
@@ -20,7 +20,7 @@ public class ServerThread extends Thread
 	ObjectOutputStream ous;
 	int userid;
 	
-	public ServerThread(Socket client) throws SQLException, ClassNotFoundException, IOException
+	public RequestHandler(Socket client) throws SQLException, ClassNotFoundException, IOException
 	{
 		client.setSoTimeout(60*1000);
 		this.userid = client.getInputStream().read();
