@@ -69,11 +69,13 @@ public class RequestHandler extends Thread
 //						ous.writeObject(getItems(userid, items));
 						ous.flush(); //Makes sure there is nothing left in the output stream
 					break;
+				//Update Option -- SHOULD ONLY WORK ON USERS OWN USERID
 				case "UPDATE":
-						ous.writeObject(new String("ACK"));
+						ous.writeObject(new String("ACK")); 
 						ous.flush();
 						client.setSoTimeout(60*1000);
 						List<String> items2 = (List<String>) ois.readObject();
+						//pseudocode for update method
 						// key = items2[0]
 						//newvalue = items2[1]
 						//write(newvalue, key)
@@ -139,8 +141,13 @@ public class RequestHandler extends Thread
 		return results;
 	}
 	
-	public List<User> getInfo(String partial) throws SQLException{
-		
+	/**
+	 * 
+	 * @param partial - The search query that the user types into the app
+	 * @return List populated with User objects that contains information about each user
+	 * @throws SQLException An error in the database
+	 */
+	public List<User> getInfo(String partial) throws SQLException {
 		List<User> people = new ArrayList<User>();
 		Statement statement = null;
 		PreparedStatement preparedStatement = null;
@@ -158,10 +165,14 @@ public class RequestHandler extends Thread
 			people.add(user);
 		}
 		
-		
-		
 		return people;
 	}
 	
+	
+	public void write(String newValue, String key){
+		
+		
+		
+	}
 	
 }
