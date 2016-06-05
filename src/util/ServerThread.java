@@ -45,6 +45,7 @@ public class ServerThread extends Thread
 						ous.writeObject(new String("ACK"));
 						ous.flush();
 						client.setSoTimeout(60*1000);
+						//String substring;
 						List<String> items = (List<String>) ois.readObject();
 						ous.writeObject(getItems(userid, items));
 						ous.flush();
