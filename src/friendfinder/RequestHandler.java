@@ -123,18 +123,18 @@ public class RequestHandler extends Thread
 				{
 					case "name":
 						results.add(name);
-							break;
+						break;
 					case "phonenum":
 						results.add(phonenum);
-							break;
+						break;
 					case "email":
 						results.add(email);
-							break;
+						break;
 					case "grade":
-					results.add(""+grade);
-							break;
+						results.add(""+grade);
+						break;
 					default:
-							break;
+						break;
 				}
 			}
 			
