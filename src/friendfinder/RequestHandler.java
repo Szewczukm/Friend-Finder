@@ -1,7 +1,6 @@
 package friendfinder;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -9,7 +8,6 @@ import java.sql.*;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class RequestHandler extends Thread
@@ -62,10 +60,12 @@ public class RequestHandler extends Thread
 						String searchQuery = (String)ois.readObject();
 						//Send back a List<User> which contains information about each user in the database
 						ous.writeObject(getInfo(searchQuery));
+						
 //						These lines were supposed to only return specific parts of the users information based on what was allowed
 //						however for simpleness we decided not to go with this just yet.
 //						List<String> items = (List<String>) ois.readObject();
 //						ous.writeObject(getItems(userid, items));
+						
 						ous.flush(); //Makes sure there is nothing left in the output stream
 					break;
 				//Update Option -- SHOULD ONLY WORK ON USERS OWN USERID
@@ -104,7 +104,6 @@ public class RequestHandler extends Thread
 	public List<String> getItems(int id, List<String> items) throws SQLException
 	{
 			Statement statement = null;
-			PreparedStatement preparedStatement = null;
 			ResultSet resultSet = null;
 			List<String> results = new ArrayList<String>();
 			statement = connect.createStatement();
@@ -148,14 +147,11 @@ public class RequestHandler extends Thread
 	 */
 	public List<User> getInfo(String partial) throws SQLException {
 		List<User> people = new ArrayList<User>();
-		Statement statement = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		statement = connect.createStatement();
-		String query = "SELECT name,phonenum,email,grade FROM userinfo WHERE name LIKE "+partial;
-		resultSet = statement.executeQuery(query);
+		Statement statement = connect.createStatement(); //prepares a MySQL statement to access database
+		String query = "SELECT name,phonenum,email,grade FROM userinfo WHERE name LIKE "+partial; //the actual MySQL query 
+		ResultSet resultSet = statement.executeQuery(query); //resultSet from the database that executes the query given, returns a huge matrix essentially
 		
-		while(resultSet.next()){
+		while(resultSet.next()){ //loop through the results returned and assign each piece of vital info to a User object
 			User user = new User();
 			user.setName(resultSet.getString("name"));
 			user.setPhonenum(resultSet.getString("phonenum"));
@@ -163,7 +159,6 @@ public class RequestHandler extends Thread
 			user.setGrade(resultSet.getInt("grade"));
 			people.add(user);
 		}
-		
 		return people;
 	}
 	
