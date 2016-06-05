@@ -10,7 +10,7 @@ from users.  It redirects each unique user to their own thread in the program th
 it waits for the user to specify an action and then acts accordingly.  
   
 Critics say  
->A ground-breaking app
+>A ground-breaking app  
 >Take my money 
   
 Clean Memes :^)  
