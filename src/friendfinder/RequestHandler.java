@@ -104,41 +104,41 @@ public class RequestHandler extends Thread
 	
 	public List<String> getItems(int id, List<String> items) throws SQLException
 	{
-		Statement statement = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		List<String> results = new ArrayList<String>();
-		statement = connect.createStatement();
-		String query = "Select * from userinfo where userid="+id;
-		resultSet = statement.executeQuery(query);
-		
-        String name = resultSet.getString("name");
-        String phonenum = resultSet.getString("phonenum");
-        String email = resultSet.getString("email");
-        int grade = resultSet.getInt("grade");
-        
-        for(String s : items)
-        {
-        	switch(s)
-        	{
-	        	case "name":
-	        		results.add(name);
-	        			break;
-	        	case "phonenum":
-	        		results.add(phonenum);
-	        			break;
-	        	case "email":
-	        		results.add(email);
-	        			break;
-	        	case "grade":
-	        		results.add(""+grade);
-	        			break;
-	        	default:
-	        			break;
-        	}
-        }
-		
-		return results;
+			Statement statement = null;
+			PreparedStatement preparedStatement = null;
+			ResultSet resultSet = null;
+			List<String> results = new ArrayList<String>();
+			statement = connect.createStatement();
+			String query = "Select * from userinfo where userid="+id;
+			resultSet = statement.executeQuery(query);
+			
+			String name = resultSet.getString("name");
+			String phonenum = resultSet.getString("phonenum");
+			String email = resultSet.getString("email");
+			int grade = resultSet.getInt("grade");
+			
+			for(String s : items)
+			{
+				switch(s)
+				{
+					case "name":
+						results.add(name);
+							break;
+					case "phonenum":
+						results.add(phonenum);
+							break;
+					case "email":
+						results.add(email);
+							break;
+					case "grade":
+					results.add(""+grade);
+							break;
+					default:
+							break;
+				}
+			}
+			
+			return results;
 	}
 	
 	/**
