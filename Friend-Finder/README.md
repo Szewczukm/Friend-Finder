@@ -7,4 +7,11 @@ Uses: Working on a group project and you don't have someone's phone number/email
   
 This repository was created for the backend server/database host to handle requests
 from users.  It redirects each unique user to their own thread in the program then
-it waits for the user to specify an action and then acts accordingly.
+it waits for the user to specify an action and then acts accordingly.  
+  
+Critics say  
+>A ground-breaking app
+>Take my money 
+  
+Clean Memes :^)  
+Bidadoo  :^)  
