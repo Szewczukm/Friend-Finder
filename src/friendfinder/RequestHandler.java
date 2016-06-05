@@ -25,9 +25,8 @@ public class RequestHandler extends Thread
 		client.setSoTimeout(60*1000);
 		this.userid = client.getInputStream().read();
 		Class.forName("com.mysql.jdbc.Driver");
-		  // Setup the connection with the DB
-		  connect = DriverManager
-		      .getConnection("jdbc:mysql://localhost/info", "root","root");
+		// Setup the connection with the DB
+		connect = DriverManager.getConnection("jdbc:mysql://localhost/info", "root","root");
 		this.client = client;
 	}
 	
