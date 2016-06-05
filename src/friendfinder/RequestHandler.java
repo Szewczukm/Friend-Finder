@@ -163,10 +163,10 @@ public class RequestHandler extends Thread
 	}
 	
 	
-	public void updateInfo(String newValue, String key){
-		
-		
-		
+	public void updateInfo(String newValue, String key) throws SQLException{
+		Statement statement = connect.createStatement();
+		String query = "UPDATE userinfo SET "+key+"='"+newValue+"' WHERE userid="+userid;
+		statement.executeQuery(query);
 	}
 	
 }
