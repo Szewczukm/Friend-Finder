@@ -1,6 +1,5 @@
 # Hackathon
 Hackathon project
-
 Name: Friend Finder  
 Group: Mark Szewczuk, Cameron Duncan, Jason Tran, Hans Missenheim, Justin Westley  
 Description: Phone application to find the phone number/email of a classmate.  
