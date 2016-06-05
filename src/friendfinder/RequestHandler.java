@@ -49,35 +49,35 @@ public class RequestHandler extends Thread
 			switch(task) {
 				//Search option
 				case "GET":
-						//Acknowledge request
-						ous.writeObject(new String("ACK"));
-						ous.flush(); //Makes sure there is nothing left in the output stream
-						//Set a timeout incase they disconnect or close app
-						client.setSoTimeout(60*1000);
-						//searchQuery would be the search that they type in on app
-						String searchQuery = (String)ois.readObject();
-						//Send back a List<User> which contains information about each user in the database
-						ous.writeObject(getInfo(searchQuery));
-						
-//						These lines were supposed to only return specific parts of the users information based on what was allowed
-//						however for simpleness we decided not to go with this just yet.
-//						List<String> items = (List<String>) ois.readObject();
-//						ous.writeObject(getItems(userid, items));
-						
-						ous.flush(); //Makes sure there is nothing left in the output stream
+					//Acknowledge request
+					ous.writeObject(new String("ACK"));
+					ous.flush(); //Makes sure there is nothing left in the output stream
+					//Set a timeout incase they disconnect or close app
+					client.setSoTimeout(60*1000);
+					//searchQuery would be the search that they type in on app
+					String searchQuery = (String)ois.readObject();
+					//Send back a List<User> which contains information about each user in the database
+					ous.writeObject(getInfo(searchQuery));
+					
+//					These lines were supposed to only return specific parts of the users information based on what was allowed
+//					however for simpleness we decided not to go with this just yet.
+//					List<String> items = (List<String>) ois.readObject();
+//					ous.writeObject(getItems(userid, items));
+					
+					ous.flush(); //Makes sure there is nothing left in the output stream
 					break;
 				//Update Option -- SHOULD ONLY WORK ON USERS OWN USERID
 				case "UPDATE":
-						ous.writeObject(new String("ACK")); 
-						ous.flush();
-						client.setSoTimeout(60*1000);
-						String updates = (String)ois.readObject();
-						String[] tokens = updates.split(delimiter);
-						String key = tokens[0];
-						String newValue = tokens[1];
-						boolean b = updateInfo(key, newValue);
-						ous.writeObject(b);
-						ous.flush();
+					ous.writeObject(new String("ACK")); 
+					ous.flush();
+					client.setSoTimeout(60*1000);
+					String updates = (String)ois.readObject();
+					String[] tokens = updates.split(delimiter);
+					String key = tokens[0];
+					String newValue = tokens[1];
+					boolean b = updateInfo(key, newValue);
+					ous.writeObject(b);
+					ous.flush();
 					break;
 					
 				case "REGISTER":
