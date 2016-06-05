@@ -169,7 +169,7 @@ public class RequestHandler extends Thread
 	}
 	
 	
-	public void write(String newValue, String key){
+	public void updateInfo(String newValue, String key){
 		
 		
 		
