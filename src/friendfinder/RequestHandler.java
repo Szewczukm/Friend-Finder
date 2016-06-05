@@ -17,9 +17,9 @@ public class RequestHandler extends Thread
 	private ObjectInputStream ois;
 	private ObjectOutputStream ous;
 	private int userid;
+	private String delimiter = "[,]";
 	
-	public RequestHandler(Socket client) throws SQLException, ClassNotFoundException, IOException
-	{
+	public RequestHandler(Socket client) throws SQLException, ClassNotFoundException, IOException {
 		client.setSoTimeout(60*1000);
 		this.userid = client.getInputStream().read();
 		Class.forName("com.mysql.jdbc.Driver");
@@ -31,8 +31,7 @@ public class RequestHandler extends Thread
 	@Override
 	public void run()
 	{
-		try 
-		{
+		try {
 			//Get the connected clients input/output streams
 			ois = new ObjectInputStream(client.getInputStream());
 			ous = new ObjectOutputStream(client.getOutputStream());
@@ -47,8 +46,7 @@ public class RequestHandler extends Thread
 			 */
 			String task = (String) ois.readObject();
 			
-			switch(task)
-			{
+			switch(task) {
 				//Search option
 				case "GET":
 						//Acknowledge request
@@ -73,12 +71,11 @@ public class RequestHandler extends Thread
 						ous.writeObject(new String("ACK")); 
 						ous.flush();
 						client.setSoTimeout(60*1000);
-						List<String> items2 = (List<String>) ois.readObject();
-						//pseudocode for update method
-						// key = items2[0]
-						//newvalue = items2[1]
-						//write(newvalue, key)
-						boolean b = true;
+						String updates = (String)ois.readObject();
+						String[] tokens = updates.split(delimiter);
+						String key = tokens[0];
+						String newValue = tokens[1];
+						boolean b = updateInfo(key, newValue);
 						ous.writeObject(b);
 						ous.flush();
 					break;
@@ -91,52 +88,11 @@ public class RequestHandler extends Thread
 					ous.writeObject(new String("INVALID TASK"));
 					ous.flush();
 					break;
-			}
-			
+			}	
 		}
-		catch (IOException | ClassNotFoundException | SQLException e)
-		{
+		catch (IOException | ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
-		
-	}
-	
-	public List<String> getItems(int id, List<String> items) throws SQLException
-	{
-			Statement statement = null;
-			ResultSet resultSet = null;
-			List<String> results = new ArrayList<String>();
-			statement = connect.createStatement();
-			String query = "Select * from userinfo where userid="+id;
-			resultSet = statement.executeQuery(query);
-			
-			String name = resultSet.getString("name");
-			String phonenum = resultSet.getString("phonenum");
-			String email = resultSet.getString("email");
-			int grade = resultSet.getInt("grade");
-			
-			for(String s : items)
-			{
-				switch(s)
-				{
-					case "name":
-						results.add(name);
-						break;
-					case "phonenum":
-						results.add(phonenum);
-						break;
-					case "email":
-						results.add(email);
-						break;
-					case "grade":
-						results.add(""+grade);
-						break;
-					default:
-						break;
-				}
-			}
-			
-			return results;
 	}
 	
 	/**
@@ -151,7 +107,7 @@ public class RequestHandler extends Thread
 		String query = "SELECT name,phonenum,email,grade FROM userinfo WHERE name LIKE "+partial; //the actual MySQL query 
 		ResultSet resultSet = statement.executeQuery(query); //resultSet from the database that executes the query given, returns a huge matrix essentially
 		
-		while(resultSet.next()){ //loop through the results returned and assign each piece of vital info to a User object
+		while(resultSet.next()) { //loop through the results returned and assign each piece of vital info to a User object
 			User user = new User();
 			user.setName(resultSet.getString("name"));
 			user.setPhonenum(resultSet.getString("phonenum"));
@@ -162,11 +118,67 @@ public class RequestHandler extends Thread
 		return people;
 	}
 	
-	
-	public void updateInfo(String newValue, String key) throws SQLException{
-		Statement statement = connect.createStatement();
-		String query = "UPDATE userinfo SET "+key+"='"+newValue+"' WHERE userid="+userid;
-		statement.executeQuery(query);
+	/**
+	 * 
+	 * @param key - The name of what is being changed
+	 * @param newValue - The new value that it is being changed to
+	 * @return True if completed successfully, false if an error has occured
+	 */
+	public boolean updateInfo(String key, String newValue){
+		try {
+			Statement statement = connect.createStatement();
+			String query = "UPDATE userinfo SET "+key+"='"+newValue+"' WHERE userid="+userid;
+			statement.executeQuery(query);
+			return true;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
+	
+	
+//	public List<String> getItems(int id, List<String> items) throws SQLException
+//	{
+//			Statement statement = null;
+//			ResultSet resultSet = null;
+//			List<String> results = new ArrayList<String>();
+//			statement = connect.createStatement();
+//			String query = "Select * from userinfo where userid="+id;
+//			resultSet = statement.executeQuery(query);
+//			
+//			String name = resultSet.getString("name");
+//			String phonenum = resultSet.getString("phonenum");
+//			String email = resultSet.getString("email");
+//			int grade = resultSet.getInt("grade");
+//			
+//			for(String s : items)
+//			{
+//				switch(s)
+//				{
+//					case "name":
+//						results.add(name);
+//						break;
+//					case "phonenum":
+//						results.add(phonenum);
+//						break;
+//					case "email":
+//						results.add(email);
+//						break;
+//					case "grade":
+//						results.add(""+grade);
+//						break;
+//					default:
+//						break;
+//				}
+//			}
+//			
+//			return results;
+//	}
+//	
+//	public void updateInfo(String key, String newValue) throws SQLException{
+//	Statement statement = connect.createStatement();
+//	String query = "UPDATE userinfo SET "+key+"='"+newValue+"' WHERE userid="+userid;
+//	statement.executeQuery(query);
+//}
 	
 }
