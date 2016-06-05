@@ -14,11 +14,11 @@ import java.util.List;
 
 public class RequestHandler extends Thread
 {
-	Connection connect = null;
-	Socket client;
-	ObjectInputStream ois;
-	ObjectOutputStream ous;
-	int userid;
+	private Connection connect = null;
+	private Socket client;
+	private ObjectInputStream ois;
+	private ObjectOutputStream ous;
+	private int userid;
 	
 	public RequestHandler(Socket client) throws SQLException, ClassNotFoundException, IOException
 	{
@@ -36,19 +36,38 @@ public class RequestHandler extends Thread
 	{
 		try 
 		{
+			//Get the connected clients input/output streams
 			ois = new ObjectInputStream(client.getInputStream());
 			ous = new ObjectOutputStream(client.getOutputStream());
+			/*
+			 * Get the request they want.  Can be one of four options
+			 * 1) GET - returns list of user objects with name, phone number, email, and grade level
+			 * 2) UPDATE - returns true if completed successfully, false if otherwise
+			 * 
+			 * These items are to be implemented later.
+			 * 3) REGISTER - returns true if completed successfully, false if otherwise
+			 * 4) CHECKPASS - returns true if authentication successful, false if otherwise
+			 */
 			String task = (String) ois.readObject();
+			
 			switch(task)
 			{
+				//Search option
 				case "GET":
+						//Acknowledge request
 						ous.writeObject(new String("ACK"));
-						ous.flush();
+						ous.flush(); //Makes sure there is nothing left in the output stream
+						//Set a timeout incase they disconnect or close app
 						client.setSoTimeout(60*1000);
-						//String substring;
-						List<String> items = (List<String>) ois.readObject();
-						ous.writeObject(getItems(userid, items));
-						ous.flush();
+						//searchQuery would be the search that they type in on app
+						String searchQuery = (String)ois.readObject();
+						//Send back a List<User> which contains information about each user in the database
+						ous.writeObject(getInfo(searchQuery));
+//						These lines were supposed to only return specific parts of the users information based on what was allowed
+//						however for simpleness we decided not to go with this just yet.
+//						List<String> items = (List<String>) ois.readObject();
+//						ous.writeObject(getItems(userid, items));
+						ous.flush(); //Makes sure there is nothing left in the output stream
 					break;
 				case "UPDATE":
 						ous.writeObject(new String("ACK"));
@@ -58,15 +77,11 @@ public class RequestHandler extends Thread
 						// key = items2[0]
 						//newvalue = items2[1]
 						//write(newvalue, key)
-						/*
-						 * String query = "";
-						 * 
-						 * 
-						 */
 						boolean b = true;
 						ous.writeObject(b);
 						ous.flush();
 					break;
+					
 				case "REGISTER":
 					break;
 				case "CHECKPASS":
@@ -123,5 +138,30 @@ public class RequestHandler extends Thread
 		
 		return results;
 	}
+	
+	public List<User> getInfo(String partial) throws SQLException{
+		
+		List<User> people = new ArrayList<User>();
+		Statement statement = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		statement = connect.createStatement();
+		String query = "SELECT name,phonenum,email,grade FROM userinfo WHERE name LIKE "+partial;
+		resultSet = statement.executeQuery(query);
+		
+		while(resultSet.next()){
+			User user = new User();
+			user.setName(resultSet.getString("name"));
+			user.setPhonenum(resultSet.getString("phonenum"));
+			user.setEmail(resultSet.getString("email"));
+			user.setGrade(resultSet.getInt("grade"));
+			people.add(user);
+		}
+		
+		
+		
+		return people;
+	}
+	
 	
 }
