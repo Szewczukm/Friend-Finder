@@ -1,4 +1,4 @@
-package util;
+package friendfinder;
 
 public class User 
 {
