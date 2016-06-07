@@ -79,8 +79,13 @@ public class RequestHandler extends Thread
 					ous.writeObject(b);
 					ous.flush();
 					break;
-					
 				case "REGISTER":
+					ous.writeObject(new String("ACK"));
+					ous.flush();
+					client.setSoTimeout(60*1000);
+					List<String> userInfo = (List<String>)ois.readObject();
+					ous.writeObject(register(userInfo));
+					ous.flush();
 					break;
 				case "CHECKPASS":
 					break;
@@ -134,6 +139,17 @@ public class RequestHandler extends Thread
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	
+	public boolean register(List<String> userInfo){
+		/*
+		 * Something along the lines of
+		 * 1) Gather user info from input list
+		 * 2) SQL statement -> "INSERT INTO userinfo (name, phonenum, email, grade) VALUES (?,?,?,?)" where ? = items from userInfo list
+		 * 3) return true if successfully completed, false if an error occured
+		 */
+		return false;
 	}
 	
 	
