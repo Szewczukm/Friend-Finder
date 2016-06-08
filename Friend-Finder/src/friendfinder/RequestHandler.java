@@ -48,14 +48,11 @@ public class RequestHandler extends Thread
 				case "GET":
 					//Acknowledge request
 					ous.writeObject(new String("ACK"));
-					ous.flush(); //Makes sure there is nothing left in the output stream
-					//Set a timeout incase they disconnect or close app
+					ous.flush();
 					client.setSoTimeout(60*1000);
-					//searchQuery would be the search that they type in on app
 					String searchQuery = (String)ois.readObject();
-					//Send back a List<User> which contains information about each user in the database
 					ous.writeObject(getInfo(searchQuery));
-					ous.flush(); //Makes sure there is nothing left in the output stream
+					ous.flush();				
 					break;
 				case "UPDATE":
 					ous.writeObject(new String("ACK")); 
