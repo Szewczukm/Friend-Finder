@@ -59,11 +59,7 @@ public class RequestHandler extends Thread
 					ous.flush();
 					client.setSoTimeout(60*1000);
 					String updates = (String)ois.readObject();
-					String[] tokens = updates.split(delimiters);
-					String key = tokens[0];
-					String newValue = tokens[1];
-					boolean b = updateInfo(key, newValue);
-					ous.writeObject(b);
+					ous.writeObject(updateInfo(updates));
 					ous.flush();
 					break;
 				case "REGISTER":
@@ -111,7 +107,7 @@ public class RequestHandler extends Thread
 	}
 	
 	/**
-	 * 
+	 * @deprecated
 	 * @param key - The name of what is being changed
 	 * @param newValue - The new value that it is being changed to
 	 * @return True if completed successfully, false if an error has occured
@@ -127,7 +123,27 @@ public class RequestHandler extends Thread
 			return false;
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @param unparsedUpate - the unparsed string 
+	 * @return true if successfully updated, false if error occured
+	 */
+	public Boolean updateInfo(String unparsedUpdate) {
+		String[] tokens = unparsedUpdate.split(delimiters);
+		String key = tokens[0];
+		String newValue = tokens[1];
+		try {
+			Statement statement = connect.createStatement();
+			String query = "UPDATE userinfo SET "+key+"='"+newValue+"' WHERE userid="+userid;
+			statement.executeQuery(query);
+			return true;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	/**
 	 * 
 	 * @param userInfo - String from app side which should be all the fields in order separated by commas (i.e. name,email,phonenum,grade)
