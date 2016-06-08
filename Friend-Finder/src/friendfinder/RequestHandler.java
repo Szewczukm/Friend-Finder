@@ -17,7 +17,7 @@ public class RequestHandler extends Thread
 	private ObjectInputStream ois;
 	private ObjectOutputStream ous;
 	private int userid;
-	private String delimiter = "[,]";
+	private String delimiters = "[,]";
 	
 	public RequestHandler(Socket client) throws SQLException, ClassNotFoundException, IOException {
 		client.setSoTimeout(60*1000);
@@ -29,8 +29,7 @@ public class RequestHandler extends Thread
 	}
 	
 	@Override
-	public void run()
-	{
+	public void run() {
 		try {
 			//Get the connected clients input/output streams
 			ois = new ObjectInputStream(client.getInputStream());
@@ -39,8 +38,6 @@ public class RequestHandler extends Thread
 			 * Get the request they want.  Can be one of four options
 			 * 1) GET - returns list of user objects with name, phone number, email, and grade level
 			 * 2) UPDATE - returns true if completed successfully, false if otherwise
-			 * 
-			 * These items are to be implemented later.
 			 * 3) REGISTER - returns true if completed successfully, false if otherwise
 			 * 4) CHECKPASS - returns true if authentication successful, false if otherwise
 			 */
@@ -58,21 +55,14 @@ public class RequestHandler extends Thread
 					String searchQuery = (String)ois.readObject();
 					//Send back a List<User> which contains information about each user in the database
 					ous.writeObject(getInfo(searchQuery));
-					
-//					These lines were supposed to only return specific parts of the users information based on what was allowed
-//					however for simpleness we decided not to go with this just yet.
-//					List<String> items = (List<String>) ois.readObject();
-//					ous.writeObject(getItems(userid, items));
-					
 					ous.flush(); //Makes sure there is nothing left in the output stream
 					break;
-				//Update Option -- SHOULD ONLY WORK ON USERS OWN USERID
 				case "UPDATE":
 					ous.writeObject(new String("ACK")); 
 					ous.flush();
 					client.setSoTimeout(60*1000);
 					String updates = (String)ois.readObject();
-					String[] tokens = updates.split(delimiter);
+					String[] tokens = updates.split(delimiters);
 					String key = tokens[0];
 					String newValue = tokens[1];
 					boolean b = updateInfo(key, newValue);
@@ -83,7 +73,7 @@ public class RequestHandler extends Thread
 					ous.writeObject(new String("ACK"));
 					ous.flush();
 					client.setSoTimeout(60*1000);
-					List<String> userInfo = (List<String>)ois.readObject();
+					String userInfo = (String)ois.readObject();
 					ous.writeObject(register(userInfo));
 					ous.flush();
 					break;
@@ -129,7 +119,7 @@ public class RequestHandler extends Thread
 	 * @param newValue - The new value that it is being changed to
 	 * @return True if completed successfully, false if an error has occured
 	 */
-	public boolean updateInfo(String key, String newValue){
+	public boolean updateInfo(String key, String newValue) {
 		try {
 			Statement statement = connect.createStatement();
 			String query = "UPDATE userinfo SET "+key+"='"+newValue+"' WHERE userid="+userid;
@@ -140,17 +130,51 @@ public class RequestHandler extends Thread
 			return false;
 		}
 	}
-	
-	
-	public boolean register(List<String> userInfo){
-		/*
-		 * Something along the lines of
-		 * 1) Gather user info from input list
-		 * 2) Check for duplicates
-		 * 3) SQL statement -> "INSERT INTO userinfo (name, phonenum, email, grade) VALUES (?,?,?,?)" where ? = items from userInfo list
-		 * 4) return true if successfully completed, false if an error occured
-		 */
+
+	/**
+	 * 
+	 * @param userInfo - String from app side which should be all the fields in order separated by commas (i.e. name,email,phonenum,grade)
+	 * @return true if register was successful, false if register had an error
+	 */
+	public boolean register(String userInfo) {
+		String[] parsedInfo = userInfo.split(delimiters);
+		String name = parsedInfo[0];
+		String user_email = parsedInfo[1];
+		String phonenum = parsedInfo[2];
+		String grade = parsedInfo[3];
+		if(!checkForDupe(user_email)) {
+			try { //insert new info
+				Statement statement = connect.createStatement();
+				String query = "INSERT INTO userinfo (name, phonenum, email, grade, userid) VALUES ("+name+","+phonenum+","+user_email
+						+ ","+grade+","+this.userid+")";
+				statement.executeQuery(query);
+				System.out.println("New Entry Added.");
+				return true;
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 		return false;
+	}
+	
+	/**
+	 * 
+	 * @return True if user info is duplicate, false if not duplicate
+	 */
+	public boolean checkForDupe(String user_email) {
+		try {
+			Statement statement = connect.createStatement();
+			String query = "SELECT email FROM userinfo WHERE userid="+this.userid;
+			ResultSet rs = statement.executeQuery(query);
+			String email = rs.getString("email");
+			if(email.equalsIgnoreCase(user_email)) {
+				return true;
+			}
+			return false;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false; //an error occured trying to connect
+		}
 	}
 	
 	
