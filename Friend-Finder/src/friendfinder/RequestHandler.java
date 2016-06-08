@@ -146,8 +146,9 @@ public class RequestHandler extends Thread
 		/*
 		 * Something along the lines of
 		 * 1) Gather user info from input list
-		 * 2) SQL statement -> "INSERT INTO userinfo (name, phonenum, email, grade) VALUES (?,?,?,?)" where ? = items from userInfo list
-		 * 3) return true if successfully completed, false if an error occured
+		 * 2) Check for duplicates
+		 * 3) SQL statement -> "INSERT INTO userinfo (name, phonenum, email, grade) VALUES (?,?,?,?)" where ? = items from userInfo list
+		 * 4) return true if successfully completed, false if an error occured
 		 */
 		return false;
 	}
