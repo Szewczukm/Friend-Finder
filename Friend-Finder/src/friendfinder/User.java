@@ -1,7 +1,15 @@
 package friendfinder;
 
-public class User 
+import java.io.Serializable;
+
+public class User implements Serializable
 {
+	
+	/**
+	 * custom serial version id, BOTH SIDES NEED THIS?
+	 */
+	private static final long serialVersionUID = 69420L;
+	
 	private String name;
 	private String email;
 	private String phonenum;
