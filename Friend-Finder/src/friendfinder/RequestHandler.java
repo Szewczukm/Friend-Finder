@@ -41,60 +41,61 @@ public class RequestHandler extends Thread
 	
 	@Override
 	public void run() {
-		try {
-			ois = new ObjectInputStream(client.getInputStream());
-			ous = new ObjectOutputStream(client.getOutputStream());
-			/*
-			 * Get the request they want.  Can be one of four options
-			 * 1) GET - returns list of user objects with name, phone number, email, and grade level
-			 * 2) UPDATE - returns true if completed successfully, false if otherwise
-			 * 3) REGISTER - returns true if completed successfully, false if otherwise
-			 * 4) CHECKPASS - returns true if authentication successful, false if otherwise
-			 */
-			String task = (String) ois.readObject();
-			
-			switch(task) {
-				case "GET": 
-					log.log(Level.INFO, "Client requesting information.");
-					ous.writeObject(new String("ACK"));
-					ous.flush();
-					client.setSoTimeout(60*1000);
-					String searchQuery = (String)ois.readObject();
-					ous.writeObject(getInfo(searchQuery));
-					ous.flush();
-					log.log(Level.INFO, "Sent client information.");
-					break;
-				case "UPDATE":
-					log.log(Level.INFO, "Client requesting to update information.");
-					ous.writeObject(new String("ACK")); 
-					ous.flush();
-					client.setSoTimeout(60*1000);
-					String updates = (String)ois.readObject();
-					ous.writeObject(updateInfo(updates));
-					ous.flush();
-					log.log(Level.INFO, "Information updated.");
-					break;
-				case "REGISTER":
-					log.log(Level.INFO, "Client wishes to register an account.");
-					ous.writeObject(new String("ACK"));
-					ous.flush();
-					client.setSoTimeout(60*1000);
-					String userInfo = (String)ois.readObject();
-					ous.writeObject(register(userInfo));
-					ous.flush();
-					log.log(Level.INFO, "Registering successful.");
-					break;
-				case "CHECKPASS":
-					break;
-				default:
-					log.log(Level.WARNING, "Client tried an invalid request.");
-					ous.writeObject(new String("INVALID TASK"));
-					ous.flush();
-					break;
-			}	
-		}
-		catch (IOException | ClassNotFoundException | SQLException e) {
-			log.log(Level.SEVERE,"An unexpected error has occured: " , e);
+		while(client.isConnected()) {
+			try {
+				ois = new ObjectInputStream(client.getInputStream());
+				ous = new ObjectOutputStream(client.getOutputStream());
+				/*
+				 * Get the request they want.  Can be one of four options
+				 * 1) GET - returns list of user objects with name, phone number, email, and grade level
+				 * 2) UPDATE - returns true if completed successfully, false if otherwise
+				 * 3) REGISTER - returns true if completed successfully, false if otherwise
+				 * 4) CHECKPASS - returns true if authentication successful, false if otherwise
+				 */
+				String task = (String) ois.readObject();		
+				switch(task) {
+					case "GET": 
+						log.log(Level.INFO, "Client requesting information.");
+						ous.writeObject(new String("ACK"));
+						ous.flush();
+						client.setSoTimeout(60*1000);
+						String searchQuery = (String)ois.readObject();
+						ous.writeObject(getInfo(searchQuery));
+						ous.flush();
+						log.log(Level.INFO, "Sent client information.");
+						break;
+					case "UPDATE":
+						log.log(Level.INFO, "Client requesting to update information.");
+						ous.writeObject(new String("ACK")); 
+						ous.flush();
+						client.setSoTimeout(60*1000);
+						String updates = (String)ois.readObject();
+						ous.writeObject(updateInfo(updates));
+						ous.flush();
+						log.log(Level.INFO, "Information updated.");
+						break;
+					case "REGISTER":
+						log.log(Level.INFO, "Client wishes to register an account.");
+						ous.writeObject(new String("ACK"));
+						ous.flush();
+						client.setSoTimeout(60*1000);
+						String userInfo = (String)ois.readObject();
+						ous.writeObject(register(userInfo));
+						ous.flush();
+						log.log(Level.INFO, "Registering successful.");
+						break;
+					case "CHECKPASS":
+						break;
+					default:
+						log.log(Level.WARNING, "Client tried an invalid request.");
+						ous.writeObject(new String("INVALID TASK"));
+						ous.flush();
+						break;
+				}	
+			}
+			catch (IOException | ClassNotFoundException | SQLException e) {
+				log.log(Level.SEVERE,"An unexpected error has occured: " , e);
+			}
 		}
 	}
 	
