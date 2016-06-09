@@ -6,30 +6,42 @@ import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Server extends Thread
 {
-	ServerSocket ss;
-	Socket client;
-	static List<User> users = new ArrayList<User>();
+	private ServerSocket ss;
+	private Socket client;
+//	private static List<User> users = new ArrayList<User>();
+	private static final Logger log = Logger.getLogger(Server.class.getName());
+	private FileHandler fh;
 	
 	@Override
 	public void run()
 	{
-		//users = getUsers();
+		try {
+			fh = new FileHandler("~/workspace/Hackathon/Friend-Finder/Server");
+			log.addHandler(fh);
+		} catch (SecurityException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		try 
 		{
 			ss = new ServerSocket(40000);
 			while(true)
 			{
 				client = ss.accept();
+				log.info("Client connected from: "+client.getInetAddress()+":"+client.getPort());
 				new RequestHandler(client);
 			}			
 		} 
 		catch (IOException | ClassNotFoundException | SQLException e) 
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.log(Level.SEVERE,"An unexpected error has occured", e);
 		}
 	}
 	/*
