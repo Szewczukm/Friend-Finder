@@ -2,6 +2,11 @@ package friendfinder;
 
 import java.io.Serializable;
 
+/**
+ * 
+ * @author Mark Szewczuk
+ *
+ */
 public class User implements Serializable
 {
 	

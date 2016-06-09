@@ -13,6 +13,11 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * 
+ * @author Mark Szewczuk (with help from Chad Horack and Joe Waldinger)
+ *
+ */
 public class RequestHandler extends Thread
 {
 	private Connection connect = null;

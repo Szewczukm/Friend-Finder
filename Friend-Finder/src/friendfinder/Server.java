@@ -10,11 +10,15 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * 
+ * @author Mark Szewzcuk (with help from Chad Horack)
+ *
+ */
 public class Server extends Thread
 {
 	private ServerSocket ss;
 	private Socket client;
-//	private static List<User> users = new ArrayList<User>();
 	private static final Logger log = Logger.getLogger(Server.class.getName());
 	private FileHandler fh;
 	private int port = 3079; //default port
