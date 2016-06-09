@@ -17,23 +17,35 @@ public class Server extends Thread
 //	private static List<User> users = new ArrayList<User>();
 	private static final Logger log = Logger.getLogger(Server.class.getName());
 	private FileHandler fh;
+	private int port = 3079; //default port
+	
+	public Server(int port){
+		this.port = port;
+	}
+	
+	public Server(){
+		
+	}
 	
 	@Override
 	public void run()
 	{
 		try {
-			fh = new FileHandler("~/workspace/Hackathon/Friend-Finder/Server");
+			fh = new FileHandler("/home/dankey/workspace/Hackathon/Friend-Finder/Server.log");
 			log.addHandler(fh);
-		} catch (SecurityException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (SecurityException e) {
+			log.log(Level.SEVERE, "An unexpected error has occured: ", e);
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "An unexpected error has occured: ", e);
 		}
 		try 
 		{
-			ss = new ServerSocket(40000);
+			log.log(Level.WARNING, "Opening server socket on port: "+port);
+			ss = new ServerSocket(port);
+			log.log(Level.INFO, "Successfully opened socket on port: "+port);
 			while(true)
 			{
+				log.info("Waiting for client to connect");
 				client = ss.accept();
 				log.info("Client connected from: "+client.getInetAddress()+":"+client.getPort());
 				new RequestHandler(client);
