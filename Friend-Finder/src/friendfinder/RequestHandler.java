@@ -62,7 +62,6 @@ public class RequestHandler extends Thread
 						String searchQuery = (String)ois.readObject();
 						ous.writeObject(getInfo(searchQuery));
 						ous.flush();
-						log.log(Level.INFO, "Sent client information.");
 						break;
 					case "UPDATE":
 						log.log(Level.INFO, "Client requesting to update information.");
@@ -72,7 +71,6 @@ public class RequestHandler extends Thread
 						String updates = (String)ois.readObject();
 						ous.writeObject(updateInfo(updates));
 						ous.flush();
-						log.log(Level.INFO, "Information updated.");
 						break;
 					case "REGISTER":
 						log.log(Level.INFO, "Client wishes to register an account.");
@@ -82,9 +80,15 @@ public class RequestHandler extends Thread
 						String userInfo = (String)ois.readObject();
 						ous.writeObject(register(userInfo));
 						ous.flush();
-						log.log(Level.INFO, "Registering successful.");
 						break;
 					case "CHECKPASS":
+						log.log(Level.INFO, "Client wishes to login");
+						ous.writeObject(new String("ACK"));
+						ous.flush();
+						client.setSoTimeout(60*1000);
+						String user_pw = (String)ois.readObject();
+						ous.writeObject(authenticate(user_pw));
+						ous.flush();
 						break;
 					default:
 						log.log(Level.WARNING, "Client tried an invalid request.");
@@ -159,6 +163,7 @@ public class RequestHandler extends Thread
 		String user_email = parsedInfo[1];
 		String phonenum = parsedInfo[2];
 		String grade = parsedInfo[3];
+		
 		log.log(Level.INFO, "Successfully parsed input string");
 		if(!checkForDupe(user_email)) {
 			try { //insert new info
@@ -195,6 +200,38 @@ public class RequestHandler extends Thread
 			}
 			return false;
 		} catch (SQLException e) {
+			log.log(Level.SEVERE, "An unexpected error has occured: ", e);
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param unpw - parsed info from android app
+	 * @return True if user is valid, false if user is not valid
+	 */
+	public Boolean authenticate(String unpw){
+		log.log(Level.FINE, "Starting authentication");
+		String[] unparsedUNPW = unpw.split(delimiters);
+		String username = unparsedUNPW[0];
+		String password = unparsedUNPW[1];
+		try {
+			log.log(Level.WARNING, "Preparing MySQL statement");
+			Statement statement = connect.createStatement();
+			String query = "SELECT email,password FROM user";
+			ResultSet rs = statement.executeQuery(query);
+			
+			log.log(Level.INFO, "Getting username and password from database");
+			String db_username = rs.getString("email");
+			String db_pw = rs.getString("password");
+			log.log(Level.INFO, "Checking if valid user");
+			if((username.equals(db_username))&&password.equals(db_pw)){
+				return true;
+			}
+			else{
+				return false;
+			}
+		} catch(SQLException e){
 			log.log(Level.SEVERE, "An unexpected error has occured: ", e);
 			return false;
 		}
