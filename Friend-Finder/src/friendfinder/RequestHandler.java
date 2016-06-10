@@ -80,7 +80,7 @@ public class RequestHandler extends Thread
 						ous.flush();
 						client.setSoTimeout(60*1000);
 						String user_pw = (String)ois.readObject();
-						ous.writeObject(authenticate(user_pw));
+						ous.writeObject(auth(user_pw));
 						ous.flush();
 						break;
 					default:
@@ -203,7 +203,7 @@ public class RequestHandler extends Thread
 	 * @param unpw - parsed info from android app
 	 * @return True if user is valid, false if user is not valid
 	 */
-	public Boolean authenticate(String unpw){
+	public Boolean auth(String unpw){
 		log.log(Level.FINE, "Starting authentication");
 		String[] unparsedUNPW = unpw.split(delimiters);
 		String username = unparsedUNPW[0];
