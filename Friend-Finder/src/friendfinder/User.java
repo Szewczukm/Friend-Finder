@@ -10,10 +10,11 @@ import java.io.Serializable;
 public class User implements Serializable
 {
 	
+	
 	/**
-	 * custom serial version id, BOTH SIDES NEED THIS?
+	 * serial version auto-generated
 	 */
-	private static final long serialVersionUID = 69420L;
+	private static final long serialVersionUID = -2074018736916524424L;
 	
 	private String name;
 	private String email;
