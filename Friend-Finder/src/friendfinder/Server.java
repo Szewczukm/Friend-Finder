@@ -60,33 +60,4 @@ public class Server extends Thread
 			log.log(Level.SEVERE,"An unexpected error has occured", e);
 		}
 	}
-	/*
-	public static void getUsers()
-	{
-		Connection connect = null;
-		Statement statement = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		try {
-				      // This will load the MySQL driver, each DB has its own driver
-		  Class.forName("com.mysql.jdbc.Driver");
-		  // Setup the connection with the DB
-		  connect = DriverManager
-		      .getConnection("jdbc:mysql://localhost/info", "root","root");
-		
-		  // Statements allow to issue SQL queries to the database
-		  statement = connect.createStatement();
-		  // Result set get the result of the SQL query
-		  resultSet = statement
-		      .executeQuery("select * from userinfo");
-		  
-		  while(resultSet.)
-		  
-		}
-		catch(Exception e)
-		{
-			
-		}
-	}
-	*/
 }
