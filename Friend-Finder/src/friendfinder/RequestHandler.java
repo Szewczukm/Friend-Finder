@@ -45,13 +45,6 @@ public class RequestHandler extends Thread
 			try {
 				ois = new ObjectInputStream(client.getInputStream());
 				ous = new ObjectOutputStream(client.getOutputStream());
-				/*
-				 * Get the request they want.  Can be one of four options
-				 * 1) GET - returns list of user objects with name, phone number, email, and grade level
-				 * 2) UPDATE - returns true if completed successfully, false if otherwise
-				 * 3) REGISTER - returns true if completed successfully, false if otherwise
-				 * 4) CHECKPASS - returns true if authentication successful, false if otherwise
-				 */
 				String task = (String) ois.readObject();		
 				switch(task) {
 					case "GET": 
@@ -113,12 +106,12 @@ public class RequestHandler extends Thread
 		log.log(Level.INFO, "Preparing information requested");
 		List<User> people = new ArrayList<User>();
 		log.log(Level.WARNING, "Preparing MySQL statement");
-		Statement statement = connect.createStatement(); //prepares a MySQL statement to access database
-		String query = "SELECT name,phonenum,email,grade FROM userinfo WHERE name LIKE "+partial; //the actual MySQL query
+		Statement statement = connect.createStatement();
+		String query = "SELECT name,phonenum,email,grade FROM userinfo WHERE name LIKE "+partial; 
 		log.log(Level.WARNING, "Executing MySQL query");
-		ResultSet resultSet = statement.executeQuery(query); //resultSet from the database that executes the query given, returns a huge matrix essentially
+		ResultSet resultSet = statement.executeQuery(query); 
 		log.log(Level.INFO,"Adding users to List<User>");
-		while(resultSet.next()) { //loop through the results returned and assign each piece of vital info to a User object
+		while(resultSet.next()) {
 			User user = new User();
 			user.setName(resultSet.getString("name"));
 			user.setPhonenum(resultSet.getString("phonenum"));
