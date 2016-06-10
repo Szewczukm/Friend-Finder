@@ -156,14 +156,20 @@ public class RequestHandler extends Thread
 		String user_email = parsedInfo[1];
 		String phonenum = parsedInfo[2];
 		String grade = parsedInfo[3];
+		String password = parsedInfo[4];
 		
 		log.log(Level.INFO, "Successfully parsed input string");
 		if(!checkForDupe(user_email)) {
-			try { //insert new info
+			try {
+				log.log(Level.WARNING, "Preparing to enter username and password");
+				Statement upStmt = connect.createStatement();
+				String query = "INSERT INTO user (userid, email, password) VALUES ("+this.userid+","+user_email+","+password+")";
+				log.log(Level.WARNING, "Attempting to add username and password");
+				upStmt.executeQuery(query);
 				log.log(Level.WARNING, "Preparing MySQL statement");
 				Statement statement = connect.createStatement();
-				String query = "INSERT INTO userinfo (name, phonenum, email, grade, userid) VALUES ("+name+","+phonenum+","+user_email
-						+ ","+grade+","+this.userid+")";
+				query = "INSERT INTO userinfo (name, phonenum, email, grade) VALUES ("+name+","+phonenum+","+user_email
+						+ ","+grade+")";
 				log.log(Level.WARNING, "Executing MySQL query");
 				statement.executeQuery(query);
 				log.log(Level.INFO, "New entry added to database");
