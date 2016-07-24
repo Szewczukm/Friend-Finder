@@ -35,7 +35,7 @@ public class RequestHandler extends Thread
 		this.userid = client.getInputStream().read();
 		Class.forName("com.mysql.jdbc.Driver");
 		connect = DriverManager.getConnection("jdbc:mysql://localhost/info", "root","root"); // Setup the connection with the DB
-		fh = new FileHandler("~/workspace/Hackathon/Friend-Finder/UserLogs/client"+this.userid);
+		fh = new FileHandler("~/workspace/Hackathon/Friend-Finder/UserLogs/client_"+this.userid+".log");
 		log.addHandler(fh);
 	}
 	
