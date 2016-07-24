@@ -49,36 +49,28 @@ public class RequestHandler extends Thread
 				switch(task) {
 					case "GET": 
 						log.log(Level.INFO, "Client requesting information.");
-						ous.writeObject(new String("ACK"));
-						ous.flush();
-						client.setSoTimeout(60*1000);
+						this.acknowledge();
 						String searchQuery = (String)ois.readObject();
 						ous.writeObject(getInfo(searchQuery));
 						ous.flush();
 						break;
 					case "UPDATE":
 						log.log(Level.INFO, "Client requesting to update information.");
-						ous.writeObject(new String("ACK")); 
-						ous.flush();
-						client.setSoTimeout(60*1000);
+						this.acknowledge();
 						String updates = (String)ois.readObject();
 						ous.writeObject(updateInfo(updates));
 						ous.flush();
 						break;
 					case "REGISTER":
 						log.log(Level.INFO, "Client wishes to register an account.");
-						ous.writeObject(new String("ACK"));
-						ous.flush();
-						client.setSoTimeout(60*1000);
+						this.acknowledge();
 						String userInfo = (String)ois.readObject();
 						ous.writeObject(register(userInfo));
 						ous.flush();
 						break;
 					case "CHECKPASS":
 						log.log(Level.INFO, "Client wishes to login");
-						ous.writeObject(new String("ACK"));
-						ous.flush();
-						client.setSoTimeout(60*1000);
+						this.acknowledge();
 						String user_pw = (String)ois.readObject();
 						ous.writeObject(auth(user_pw));
 						ous.flush();
@@ -234,6 +226,16 @@ public class RequestHandler extends Thread
 			log.log(Level.SEVERE, "An unexpected error has occured: ", e);
 			return false;
 		}
+	}
+	
+	/**
+	 * 
+	 * @throws IOException
+	 */
+	public void acknowledge() throws IOException{
+		ous.writeObject(new String("ACK"));
+		ous.flush();
+		client.setSoTimeout(60*1000);
 	}
 	
 	/**
